@@ -10,12 +10,7 @@ import json
 from mongoengine.django.shortcuts import get_document_or_404, get_list_or_404
 
 from spider.models import *
-import crawler
-from sample import sample
-import cal
-
-from nltk.tokenize import word_tokenize
-from nltk import FreqDist
+from spider import crawler
 
 class IndexListView(ListView):
 	queryset = Category.objects.order_by('_id', 'faculty')
