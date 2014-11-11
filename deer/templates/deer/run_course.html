@@ -1,0 +1,108 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'spider/css/bootstrap.css' %}" />
+<!--script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax-plugin.min.js' %}"></script-->
+
+<div class="container">
+<div class="row">
+
+{% if course_tree %}
+<div class="col-md-4">
+    <table class="table table-striped">
+    <tbody>
+    	<tr>
+    		<td>學年期 <br/> 21kr流水號</td>
+            <td>{{ course_tree.pilot_course.semester }}<br/>{{ course_tree.pilot_course.pk }}</td>
+        </tr>
+        <tr>
+            <td>流水號 / 課號</td>
+            <td>{{ course_tree.pilot_course.serial_no }}<br/>{{ course_tree.pilot_course.reg_no }}</td>
+        </tr>
+        <tr>
+    		<td>名稱</td>
+            <td>{{ course_tree.pilot_course.ch_name }}<br/>{{ course_tree.pilot_course.en_name }}</td>
+        </tr>
+        <tr>
+    		<td>備註</td>
+            <td>{{ course_tree.pilot_course.preselected|yesno:"[預選] ," }}{{ course_tree.pilot_course.second_select|yesno:"[不開放初選] ," }}{{ course_tree.pilot_course.graduate_institute|yesno:"[碩博同修] ," }} [密碼卡: {{ course_tree.pilot_course.pwd_card }}] [授課語言: {{ course_tree.pilot_course.language }}]<p>{{ course_tree.pilot_course.remarks }}</p></td>
+        </tr>
+        <tr>
+    		<td>學分</td>
+            <td>{{ course_tree.pilot_course.credit }}</td>
+        </tr>
+        <tr>
+    		<td>授課老師</td>
+            <td>{{ course_tree.pilot_course.teachers|join:"<br/>" }}</td>
+        </tr>
+        <tr>
+    		<td>時間 / 教室</td>
+            <td>
+                {% for p in course_tree.pilot_course.period %}
+                {{ p.weekday }}{{ p.periods|join:"" }} / {{ p.classroom }} <br/>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+    		<td>學院 / 系所</td>
+            <td>{{ course_tree.pilot_course.category.faculty }} / {{ course_tree.pilot_course.category.dep }}</td>
+        </tr>
+        <tr>
+    		<td>人數上限</td>
+            <td>{{ course_tree.pilot_course.limited_ppl }}</td>
+        </tr>
+        <tr>
+    		<td>連結</td>
+            <td></td>
+    	</tr>
+    </tbody>
+	</table>
+</div>
+<div class="col-md-8">
+<!--leave comment-->
+<div>
+<form name="leave_comment"  class="form" role="form" action="{%url 'deer:barkComment' course_tree.id %}" method="post">
+    {% csrf_token %}
+    <div class="input-group">
+      <input type="text" class="form-control" id="abstract" name="abstract" placeholder="覺得這門課⋯⋯">
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-default">送出</button>
+      </span>
+    </div><!-- /input-group -->
+</form>
+</div>
+{% if comment_list %}
+{% for c in comment_list %}
+<div class="row">
+    <div class="col-md-4"><p>{{ c.abstract }}</p></div>
+    <div class="col-md-2">{{ c.left_by.nick_name }}</div>
+    <div class="col-md-2">推 {{ c.push_num }}</div>
+</div>
+    {% if c.msgs %}
+    {% for m in c.msgs %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="col-md-3"><p>{{ m.text }}<p></div>
+        <div class="col-md-1">{{ m.left_by.nick_name }}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <form name="leave_msg" class="form" role="form" action="{%url 'deer:barkMsg' c.id %}" method="post">
+    {% csrf_token %}
+    <div class="col-md-4">
+        <div class="input-group">
+        <input type="text" class="form-control" id="text" name="text" placeholder="覺得這門課⋯⋯">
+        <span class="input-group-btn">
+        <button type="submit" class="btn btn-default">送出</button>
+        </span>
+        </div><!-- /input-group -->
+    </div>
+    </form>
+</div>
+{% endfor %}
+{% endif %}
+</div>
+{% else %}
+    <p>No courses are available.</p>
+{% endif %}
+
+</div>
+</div>

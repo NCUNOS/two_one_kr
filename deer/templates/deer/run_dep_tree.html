@@ -1,0 +1,44 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'spider/css/bootstrap.css' %}" />
+<div class="row">
+    <div class="col-md-6">
+        <h1>{{ category.faculty }} / {{ category.dep }}</h1>
+        
+    </div>
+</div>
+<div class="row">
+<div class="col-md-10">
+{% if tree_list %}
+    <table class="table table-striped">
+    <thead>
+    	<tr>
+    		<td>學年期 <br/> 21kr流水號</td>
+            <td>流水號 / 課號</td>
+    		<td>名稱</td>
+    		<td>學分</td>
+    		<td>授課老師</td>
+    		<td>時間 / 教室</td>
+    	</tr>
+    </thead>
+    <tbody>
+    {% for t in tree_list %}
+        <tr>
+        	<td>{{ t.pilot_course.semester }}<br/>{{ t.pilot_course.pk }}</td>
+            <td>{{ t.pilot_course.serial_no }}<br/>{{ t.pilot_course.reg_no }}</td>
+        	<td><a href="{%url 'deer:runCourse' t.id t.ch_url %}">{{ t.pilot_course.ch_name }}<br/>{{ t.pilot_course.en_name }}</a></td>
+        	<td>{{ t.pilot_course.credit }}</td>
+        	<td>{{ t.pilot_course.teachers|join:"<br/>" }}</td>
+        	<td>
+        		{% for p in t.pilot_course.period %}
+        		{{ p.weekday }}{{ p.periods|join:"" }} / {{ p.classroom }} <br/>
+        		{% endfor %}
+        	</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+	</table>
+{% else %}
+    <p>No courses are available.</p>
+{% endif %}
+</div>
+</div>

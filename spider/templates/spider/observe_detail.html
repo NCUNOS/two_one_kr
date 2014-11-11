@@ -1,0 +1,51 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'spider/css/bootstrap.css' %}" />
+<div class="row">
+<div class="col-md-2">
+    <p>樹號：{{ tree.pk }} {{ tree.ch_url }} {{ tree.en_url }}</p>
+</div>
+</div>
+<div class="row">
+<div class="col-md-10">
+{% if tree %}
+    <table class="table table-striped">
+    <thead>
+    	<tr>
+    		<td>學年期 <br/> 21kr流水號</td>
+            <td>流水號 / 課號</td>
+    		<td>名稱</td>
+    		<td>備註</td>
+    		<td>學分</td>
+    		<td>授課老師</td>
+    		<td>時間 / 教室</td>
+    		<td>學院 / 系所</td>
+    		<td>人數上限</td>
+    		<td>連結</td>
+    	</tr>
+    </thead>
+    <tbody>
+    {% for course in tree.course_leaves %}
+        <tr>
+        	<td>{{ course.semester }}<br/>{{ course.pk }}</td>
+            <td>{{ course.serial_no }}<br/>{{ course.reg_no }}</td>
+        	<td>{{ course.ch_name }}<br/>{{ course.en_name }}</td>
+        	<td>{{ course.preselected|yesno:"[預選] ," }}{{ course.second_select|yesno:"[不開放初選] ," }}{{ course.graduate_institute|yesno:"[碩博同修] ," }} [密碼卡: {{ course.pwd_card }}] [授課語言: {{ course.language }}]<p>{{ course.remarks }}</p></td>
+        	<td>{{ course.credit }}</td>
+        	<td>{{ course.teachers|join:"<br/>" }}</td>
+        	<td>
+        		{% for p in course.period %}
+        		{{ p.weekday }}{{ p.periods|join:"" }} / {{ p.classroom }} <br/>
+        		{% endfor %}
+        	</td>
+        	<td>{{ course.category.faculty }} / {{ course.category.dep }}</td>
+        	<td>{{ course.limited_ppl }}</td>
+        	<td></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+	</table>
+{% else %}
+    <p>No courses are available.</p>
+{% endif %}
+</div>
+</div>

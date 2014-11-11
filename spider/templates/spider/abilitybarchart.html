@@ -1,0 +1,29 @@
+<head>
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'spider/css/bootstrap.css' %}" />
+<style>
+body{
+	margin:10px;
+}
+</style>
+
+<script src="{% static 'spider/js/jquery.js' %}"></script>
+<script src="{% static 'spider/js/chart.js' %}"></script>
+<script language="javascript">
+var url = "{%url 'spider:abilityBarAPI' dep_id %}";
+{% verbatim %}
+$(function(){
+	var ctx = document.getElementById("myChart").getContext("2d");
+	$.getJSON(url, function(data){
+		var myRadarChart = new Chart(ctx).Bar(data,{
+			scaleShowLabels : true,
+			legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+		});
+	});
+});
+{% endverbatim %}
+</script>
+</head>
+<body>
+	<canvas id="myChart" width="800" height="400"></canvas>
+</body>

@@ -1,0 +1,22 @@
+{% load staticfiles %}
+{% csrf_token %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'spider/css/bootstrap.css' %}" />
+
+<div class="container-fluid">
+<div class="row">
+{% for c in category_list %}
+
+{% ifchanged c.faculty %}
+{% if not forloop.first %}
+</table></div>
+{% endif %}
+<div class="col-md-4">
+	<table class="table table-striped"><tr><th>{{ c.faculty }}</th></tr>
+{% endifchanged %}
+	<tr>
+	<td><a href="{% url 'spider:depList' 1031 c.id %}">{{ c.dep }}</a></td>
+	</tr>
+{% endfor %}
+</div>
+</div>

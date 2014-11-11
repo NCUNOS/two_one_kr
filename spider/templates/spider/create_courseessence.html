@@ -1,0 +1,91 @@
+<head>
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'spider/css/bootstrap.css' %}" />
+
+<script src="{% static 'spider/js/jquery.js' %}"></script>
+<script src="{% static 'spider/js/wordfreq.js' %}"></script>
+<script language="javascript">
+function getWordListForm(target, index, text){
+    var options = {
+      workerUrl: "{% static 'spider/js/wordfreq.worker.js' %}" };
+    // Initialize and run process() function
+    var wordfreq = WordFreq(options).process(text).getList(function (list) {
+        var html = "";
+        for(var i =0; i<list.length; i++){
+            html += ' \
+            <div class="form-group col-md-3"> \
+            <div class="input-group"> \
+                <span class="input-group-addon"> \
+                    <input type="checkbox" name="chkbox'+index+'[]" checked="true" value="'+i+'"> \
+                </span> \
+                <input type="text" class="form-control" name="word'+index+'[]" value="'+list[i][0].toLowerCase()+'"> \
+            </div> \
+            <div class="input-group col-md-2"> \
+                <input type="text" class="form-control" name="freq'+index+'[]" value="'+list[i][1]+'"> \
+            </div> \
+            </div>';
+        }
+        $(target).html(html);
+    });
+}
+
+    var course_content_en = [];
+    var course_objective_en = [];
+    var i=0;
+    {% for ce in course_essence_list %}
+        //course_content_ch[i] = "{{ ce.content_ch }}";
+        course_content_en[i] = "{{ ce.content_en }}";
+        //course_objective_ch[i] = "{{ ce.objective_ch }}";
+        course_objective_en[i] = "{{ ce.objective_en }}";
+        i++;
+    {% endfor %}
+    $(function(){
+        $('.tag_list_en').each(function(i){
+            getWordListForm(this, i, course_content_en[i]+course_objective_en[i]);
+        });
+    });
+</script>
+</head>
+<body>
+<div class="row">
+<div class="col-md-12">
+{% if course_essence_list %}
+    <form name="word_list"  class="form-inline" role="form" method="post" action="{%url 'spider:createTagList' %}">
+    {% csrf_token %}
+    <table class="table table-striped">
+    <thead>
+    	<tr>
+    		<td>樹號</td>
+            <td>流水號 / 課號</td>
+    		<td>名稱</td>
+    		<td>授課老師</td>
+    	</tr>
+    </thead>
+    <tbody>
+    {% for ce in course_essence_list %}
+        <input type="hidden" name="ce[]" value="{{ ce.id }}">
+        <tr>
+        	<td>{{ ce.course.leaf_of }}</td>
+            <td>{{ ce.course.serial_no }}<br/>{{ ce.course.reg_no }}</td>
+        	<td>{{ ce.course.ch_name }}<br/>{{ ce.course.en_name }}</td>
+        	<td>{{ ce.course.teachers|join:"<br/>" }}</td>
+        </tr>
+        <tr>
+            <td colspan=4>
+            <div class="container-fluid">
+            <div class="tag_list_en row"></div>
+            </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+	</table>
+    <button type="submit" class="btn btn-default" name="count" value="{{ course_essence_list|length }}">送出</button>
+    </form>
+{% else %}
+    <p>No courses are available.</p>
+{% endif %}
+</div>
+</div>
+</body>

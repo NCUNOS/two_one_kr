@@ -1,0 +1,444 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'deer/css/bootstrap.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'deer/css/bootstrap-theme.css' %}" />
+
+<style>
+body{
+	position: relative;
+}
+.container{
+	padding-left: 5%;
+	padding-right: 5%;
+}
+#sidebar{
+	/*height: 100%;*/
+}
+
+#sidebar > .nav > .active{
+	border-radius: 5px 0 0 5px;
+	border: 2px solid grey;
+	border-right: 0;
+}
+
+#sidebar > .nav > li:not(.active){
+	border-right: 2px solid grey;
+}
+
+#mainbox{
+	height: 100%;
+	overflow-y: scroll;
+}
+#titleRingContainer{
+	position: relative;
+	overflow: hidden;
+}
+
+#titleRingContainer > div{
+	height: 280px !important;
+    margin-left: -50px;
+    overflow: hidden;
+    width: 120% !important;
+}
+
+.titleRingPolar{
+	width: 1000px !important;
+	height: 1000px !important;
+	margin: 0;
+}
+</style>
+
+<script src="{% static 'deer/js/jquery.js' %}"></script>
+<script src="{% static 'deer/js/bootstrap.js' %}"></script>
+<script src="{% static 'deer/js/highcharts.js' %}"></script>
+<script src="{% static 'deer/js/highcharts-more.js' %}"></script>
+
+<script>
+var testdata = {
+	"comments":[
+		{"text": "肚子餓起來？<br/>自己是一動也不動。在想著，雖然因為坐得太久。<br/>關尹喜就提議要他講學了。收了口袋，我喜歡大鋼球，那個是我們所期望的聯邦之光。好不識羞？鴉鵲親嘴。孔子好像受了當頭一棒！孔乙己。講。對不起得很，父親回家變賣典質，沈澱著彩虹似的夢，傲嬌吧。我看那邊月臺的柵欄外有幾個賣東西的等著顧客，做了許多大事，歎一口氣，你還該記得罷。", "push_num": 55, "date": "2013-10-12 10:10:10", "left_by": "ida_gungun", "elements": ["期末報告", "個人報告", "報告", "期末考", "考試"], "msgs": [{"text": "咬我啊，他只說？扭轉人類滅亡的希望。引滿弦？雖然肚餓。只見還站著許多巡警和探子。在城根下慢慢的繞著，回家看看你的老婆去罷，愛情要遠離的時候？什麼，話說的很不少？便在馬上焦躁了起來，便可以拾得獵物。沒有抄。他的肖像也常受你小口的親吻，他說是陝西。", "left_by": "ida_smallgun", "date": "2013-10-12 10:15:15" }]},
+		{"text": "小籠包，我吃了晚飯？并且假如我這番不到歐洲！只好明天再走了。才站在旁邊。他的學生庚桑楚，陽光的和暖與花草的美麗！揪住他們的頭髮，就是很多愛孩子的人！我自己也何嘗不篤愛我的親親。庚桑楚回答說。", "push_num": 10, "date": "2013-10-09 10:10:10", "left_by": "ida_hugegun", "elements": ["隨堂考", "期末考", "考試", "出席", "平時"], "msgs": [{"text": "但卻是字字千鈞。說錯了什麼話，對不起得很，她說到傷心處，嗯。在這廣漠的人海裡，雪梨的千萬住民在瞬間消散成為灰燼這多悲傷呀。雖然並不笑，我一生只曉得這一個完全的人，先生今天好像不大高興，算是，想不到奇異果爛掉以後。", "left_by": "ida_smallgun", "date": "2013-10-11 10:15:15" }, {"text": "你回到了天父的懷抱，便跨上馬。臉上籠上了一層灰色。我自己久不投在變化里了，然而你怎麼可能拋卻記憶來愛我。他喝過幾口白開水！細腰蜂兒化別個。於是轟轟了一陣，他再三囑咐茶房。姐已經不行了。", "left_by": "ida_mediumgun", "date": "2013-10-12 01:15:15" },]},
+		{"text": "兩串稿子，經過29萬6千光年長征，同時她們講你生前的故事。你在時。放在門檻上，但我那時萬想不到是太太，又說？閃閃如巖下電。覺得慚愧，下午上車北去，我才也覺得他的確長久沒有來了。而且掌櫃見了孔乙己。開了門。他吆喝道，你說。愛你，就用那射雞的箭作抵押。", "push_num": 7, "date": "2013-10-01 10:10:10", "left_by": "ida_hugegun", "elements": ["隨堂考", "考試", "平時", "出席", "小組報告", "報告"], "msgs": []},
+]};
+var testdata;
+
+function initComment(){
+    //testdata = $.parseJSON(testdata);
+    html='<table class="table table-striped">';
+    comments = testdata['comments'];
+    for (var key in comments){
+        html+='<tr><td><p>'+comments[key]['left_by']+'・'+comments[key]['date']+'・推 '+comments[key]['push_num']+'</p><p>'+comments[key]['text']+'</p><ol>';
+        msgs = comments[key]['msgs']
+        for (var key2 in msgs){
+            html+='<li>'+msgs[key2]['text']+' - '+msgs[key2]['left_by']+'・'+msgs[key2]['date']+'</li>';
+        }
+        html+='</ol><p>'+comments[key]['elements'].join()+'</p>';
+        html+='</td></tr>';
+    }
+    html+='</table>';
+    $('#commentContainer').html(html);
+}
+
+function drawTitleRing(){
+	label_list = ["Pass度", "甜分度", "收獲度"];
+	data = [{{ course_tree.tri_indexes|join:"," }}];
+	count = 0;
+    $('#titleRing').highcharts({
+        chart: {
+            polar: true,
+            marginTop: -230,
+            marginLeft: 30,
+            width: 400,
+            height: 400,
+            className: 'titleRingPolar',
+            events:{
+            	load: function(){
+            		//Draw the base circle
+            		var ren = this.renderer;
+            		ren.circle(210, 80, 100).attr({
+            			fill: '#FFFFFF',
+            			zIndex: -1
+            		}).add();
+            	}
+            }
+        },
+
+        title: {
+        	text: '{{ course_tree.pilot_course.ch_name }}<br/>{{course_tree.pilot_course.en_name}}'
+        },
+
+        pane: {
+            startAngle: 110,
+            endAngle: 245,
+            background: [{
+            	outerRadius: '109%',
+            	borderWidth: 1,
+            	border: 'grey'
+            }]
+        },
+
+        legend:{
+        	enabled: false
+        },
+
+        xAxis: {
+            tickInterval: 120,
+            min: 0,
+            max: 480,
+            offset: 10,
+            showLastLabel: false,
+            showFirstLabel: false,
+            reversed: true,
+            categories: this.label_list,
+            labels: {
+            	align: 'center',
+            	y: -3,
+            	style: {
+            		fontSize: '12pt'
+            	},
+		        formatter: function () {
+		            value = label_list[count];
+
+		            count++;
+		            if (count == 3) {
+		                count = 0;
+		            }
+
+		            return value;
+		        }
+	    	}
+        },
+
+        yAxis: {
+            min: 0,
+            max: 5,
+            tickInterval: 1,
+            showLastLabel: true,
+            showFirstLabel: false,
+            labels: {
+            	x: 5,
+            	y: 20,
+            	style: {
+            		fontSize: '0pt'
+            	}
+            }
+        },
+
+        plotOptions: {
+            series: {
+                pointStart: 120,
+                pointInterval: 120, 
+                reversed: true,
+                dataLabels: {
+                	enabled: true,
+                	align: 'center',
+                	y: -10,
+                }
+
+            },
+            column: {
+                pointPadding: 0,
+                groupPadding: 0,
+                borderWidth: 1
+            }
+        },
+
+        series: [{
+            type: 'column',
+            name: 'tri-index',
+            data: this.data,
+            pointPlacement: 'between',
+        }],
+
+        tooltip:{
+        	enabled: false
+        }
+    });
+}
+
+function drawGradingChart(){
+    var colors = ["#2b908f", "#90ee7e", "#f45b5b", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee", "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+        categories = ['考試', '報告', '平時'],
+        data = [{
+            y: 50,
+            color: colors[0],
+            drilldown: {
+                name: '考試',
+                categories: ['隨堂考', '期中考', '期末考'],
+                data: [10, 20, 20],
+                color: colors[0]
+            }
+        }, {
+            y: 35,
+            color: colors[1],
+            drilldown: {
+                name: '報告',
+                categories: ['個人報告', '小組報告', '期末報告'],
+                data: [10, 10, 15],
+                color: colors[1]
+            }
+        }, {
+            y: 15,
+            color: colors[2],
+            drilldown: {
+                name: '平時',
+                categories: ['出席', '課堂參與'],
+                data: [10, 5],
+                color: colors[2]
+            }
+        }],
+        browserData = [],
+        versionsData = [],
+        i,
+        j,
+        dataLen = data.length,
+        drillDataLen,
+        brightness;
+
+
+    // Build the data arrays
+    for (i = 0; i < dataLen; i += 1) {
+
+        // add browser data
+        browserData.push({
+            name: categories[i],
+            y: data[i].y,
+            color: data[i].color
+        });
+
+        // add version data
+        drillDataLen = data[i].drilldown.data.length;
+        for (j = 0; j < drillDataLen; j += 1) {
+            brightness = 0.2 - (j / drillDataLen) / 5;
+            versionsData.push({
+                name: data[i].drilldown.categories[j],
+                y: data[i].drilldown.data[j],
+                color: Highcharts.Color(data[i].color).brighten(brightness).get()
+            });
+        }
+    }
+
+    // Create the chart
+    $('#gradingChart').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: ' '
+        },
+        yAxis: {
+            title: {
+                text: 'Total percent market share'
+            }
+        },
+        plotOptions: {
+            pie: {
+                shadow: false,
+                center: ['50%', '50%'],
+                allowPointSelect: true,
+            	cursor: 'pointer',
+            }
+        },
+        tooltip: {
+            valueSuffix: '%'
+        },
+        series: [{
+            name: '分數比重',
+            data: browserData,
+            size: '50%',
+            dataLabels: {
+                formatter: function () {
+                    return this.y > 5 ? this.point.name : null;
+                },
+                color: 'white',
+                distance: -30
+            }
+        }, {
+            name: '分數比重',
+            data: versionsData,
+            size: '80%',
+            innerSize: '60%',
+            dataLabels: {
+                formatter: function () {
+                    // display only if larger than 1
+                    return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + this.y + '%'  : null;
+                }
+            }
+        }]
+    });
+
+	/*click*/
+	var chart = $('#gradingChart').highcharts(), selectedPoints = chart.getSelectedPoints();
+
+    $('#gradingChart > div > svg').click(function(){
+    	console.log(chart.getSelectedPoints());
+    });
+}
+
+//var color_list = ["#F7464A", "#46BFBD", "#FDB45C"];
+//var highlight_list = ["#FF5A5E", "#5AD3D1",  "#FFC870"];
+
+
+$(function(){
+	drawTitleRing();
+	drawGradingChart();
+	//initTestData();
+    initComment();
+});
+
+</script>
+<body>
+<div class="container">
+<div class="col-md-2">
+<!-- Nav tabs -->
+<div class="navbar navbar-static" id="sidebar">
+<ul class="nav">
+  <li><a href="#info">Info</a></li>
+  <li><a href="#grading">Grading</a></li>
+  <li><a href="#comment">Comment</a></li>
+  <li><a href="#question">Question</a></li>
+</ul>
+</div>
+</div>
+
+<!-- Tab panes -->
+<div class="col-md-10" id="mainbox" data-spy="scroll" data-target="#sidebar" data-offset="300">
+	<div class="col-md-6" id="titleRingContainer"><div><div id="titleRing"></div></div></div>
+	<div class="col-md-6" id="info">
+		<table class="table">
+			<tr>
+				<th colspan="2"><h1>課程資訊</h1><span>{{ course_tree.pilot_course.semester }}學期</span></th>
+			</tr>
+			<tr>
+				<td>課號</td>
+				<td>{{ course_tree.pilot_course.reg_no }}</td>
+			</tr>
+			<tr>
+				<td>開課單位</td>
+				<td>{{ course_tree.pilot_course.category.faculty }} / {{ course_tree.pilot_course.category.dep }}</td>
+			<tr>
+				<td>時間</td>
+				<td>
+				{% for p in course_tree.pilot_course.period %}
+        		{{ p.weekday }}{{ p.periods|join:"" }} / {{ p.classroom }} <br/>
+        		{% endfor %}
+        		</td>
+        	</tr>
+        	<tr>
+        		<td>授課老師</td>
+        		<td>{{ course_tree.pilot_course.teachers|join:"、" }}</td>
+        	</tr>
+        </table>
+        <div class="btn btn-default">發表心得</div>
+		<div class="btn btn-default">發表提問</div>
+	</div>
+	<div class="col-md-8" id="grading">
+		<div id="gradingChart"></div>
+	</div>
+	<div class="col-md-4">
+	</div>
+	<div class="col-md-12" id="comment">
+		<h1>精選心得</h1>
+        <div id="commentContainer"></div>
+		<!--table class="table table-striped">
+			<tr>
+				<th>標題</th>
+				<th>作者</th>
+				<th>日期</th>
+				<th>標籤</th>
+			<tr>
+				<td>請問老師帥嗎？啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</td>
+				<td>xyz123</td>
+				<td>2013-01-20</td>
+				<td>經濟、系選修</td>
+			</tr>
+			<tr>
+				<td>請問老師帥嗎？</td>
+				<td>xyz123</td>
+				<td>2013-01-20</td>
+				<td>經濟、系選修</td>
+			</tr>
+			<tr>
+				<td>請問老師帥嗎？</td>
+				<td>xyz123</td>
+				<td>2013-01-20</td>
+				<td>經濟、系選修</td>
+			</tr>
+			<tr>
+				<td colspan="4"><a>查看更多⋯⋯</a></td>
+			</tr>
+		</table-->
+	</div>
+	<div class="col-md-12" id="question">
+		<h1>相關提問</h1>
+		<table class="table table-striped">
+			<tr>
+				<th>標題</th>
+				<th>作者</th>
+				<th>日期</th>
+				<th>標籤</th>
+			<tr>
+				<td>請問老師帥嗎？啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</td>
+				<td>xyz123</td>
+				<td>2013-01-20</td>
+				<td>經濟、系選修</td>
+			</tr>
+			<tr>
+				<td>請問老師帥嗎？</td>
+				<td>xyz123</td>
+				<td>2013-01-20</td>
+				<td>經濟、系選修</td>
+			</tr>
+			<tr>
+				<td>請問老師帥嗎？</td>
+				<td>xyz123</td>
+				<td>2013-01-20</td>
+				<td>經濟、系選修</td>
+			</tr>
+			<tr>
+				<td colspan="4"><a>查看更多⋯⋯</a></td>
+			</tr>
+		</table>
+	</div>
+</div>
+</div>
+</body>

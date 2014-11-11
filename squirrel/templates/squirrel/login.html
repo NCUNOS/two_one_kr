@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'spider/css/bootstrap.css' %}" />
+<!--script type="text/javascript" src="{% static 'django_ajax/js/jquery.ajax-plugin.min.js' %}"></script-->
+
+<div class="container">
+<div class="row">
+<div class="col-md-12">
+
+<form name="AuthenticationForm"  class="form" role="form" action="" method="post">
+    {% csrf_token %}
+    <div class="from-group">
+      <!--input type="text" class="form-control" id="username" name="username" placeholder="帳號">
+      <input type="password" class="form-control" id="password" name="password" placeholder="密碼">
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-default">送出</button>
+      </span-->
+    {{ form }}
+    <span class="input-group-btn">
+        <button type="submit" class="btn btn-default">送出</button>
+      </span>
+    </div><!-- /input-group -->
+</form>
+</div>
+</div>
+</div>
