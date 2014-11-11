@@ -25,5 +25,4 @@ urlpatterns = patterns('',
 	url(r'^abilitybarchart/api/(?P<dep_id>\d+)/$', views.GetAbilityBarJSON.as_view(), name='abilityBarAPI'),
 
 	url(r'^dotmap/api/(?P<dep_id>\d+)/$', views.DotMapJSON.as_view(), name='dotMapAPI'),
-	url(r'^test/$', views.TestView.as_view(), name='test'),
 )
