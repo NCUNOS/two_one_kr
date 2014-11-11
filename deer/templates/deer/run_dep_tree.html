@@ -25,7 +25,7 @@
         <tr>
         	<td>{{ t.pilot_course.semester }}<br/>{{ t.pilot_course.pk }}</td>
             <td>{{ t.pilot_course.serial_no }}<br/>{{ t.pilot_course.reg_no }}</td>
-        	<td><a href="{%url 'deer:runCourse' t.id t.ch_url %}">{{ t.pilot_course.ch_name }}<br/>{{ t.pilot_course.en_name }}</a></td>
+        	<td><a href="{%url 'deer:stareCourse' t.id t.ch_url %}">{{ t.pilot_course.ch_name }}<br/>{{ t.pilot_course.en_name }}</a></td>
         	<td>{{ t.pilot_course.credit }}</td>
         	<td>{{ t.pilot_course.teachers|join:"<br/>" }}</td>
         	<td>
