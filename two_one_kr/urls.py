@@ -19,5 +19,4 @@ urlpatterns = patterns('',
     url(r'^spider/', include('spider.urls', namespace="spider")),
     url(r'^squirrel/', include('squirrel.urls', namespace="squirrel")),
     url(r'^deer/', include('deer.urls', namespace="deer")),
-    url(r'^man/', include('man.urls', namespace="man")),
 )
